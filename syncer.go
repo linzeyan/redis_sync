@@ -18,16 +18,40 @@ func Sync() {
 		fmt.Println(err)
 	}
 	for _, key := range keys {
-		value, err := Local.Get(ctx, key).Result()
+		typ, err := Local.Type(ctx, key).Result()
 		if err != nil {
-			fmt.Println("Get value err.", err)
+			fmt.Println("Get type err.", err)
 		}
-		ttl, err := Local.TTL(ctx, key).Result()
-		if err != nil {
-			fmt.Println("Get ttl err.", err)
+		fmt.Println(typ)
+		switch typ {
+		case "string":
+			stringType(key)
+		case "hash":
+			hashType(key)
 		}
-		if _, err := Remote.Set(ctx, key, value, ttl*time.Second).Result(); err != nil {
-			fmt.Println("Set key and value err.", map[string]string{key: value}, err)
-		}
+	}
+}
+
+func stringType(key string) {
+	value, err := Local.Get(ctx, key).Result()
+	if err != nil {
+		fmt.Println("Get value err.", err)
+	}
+	ttl, err := Local.TTL(ctx, key).Result()
+	if err != nil {
+		fmt.Println("Get ttl err.", err)
+	}
+	if _, err := Remote.Set(ctx, key, value, ttl*time.Second).Result(); err != nil {
+		fmt.Println("Set key and value err.", map[string]string{key: value}, err)
+	}
+}
+
+func hashType(key string) {
+	value, err := Local.HGetAll(ctx, key).Result()
+	if err != nil {
+		fmt.Println("Get value err.", err)
+	}
+	if _, err := Remote.HMSet(ctx, key, value).Result(); err != nil {
+		fmt.Println("Set key and value err.", map[string]interface{}{key: value}, err)
 	}
 }
