@@ -8,10 +8,10 @@ import (
 
 var ctx = context.Background()
 
-func NewRdb(addr, auth string, db int) *redis.Client {
+func NewRdb(addr, port, auth string, db uint) *redis.Client {
 	return redis.NewClient(&redis.Options{
-		Addr:     addr,
+		Addr:     addr + ":" + port,
 		Password: auth,
-		DB:       db,
+		DB:       int(db),
 	})
 }
