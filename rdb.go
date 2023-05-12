@@ -1,13 +1,10 @@
 package redisync
 
 import (
-	"context"
-
 	"github.com/go-redis/redis/v8"
 )
 
-var ctx = context.Background()
-
+/* NewRdb returns a new redis client. */
 func NewRdb(addr, port, auth string, db uint) *redis.Client {
 	return redis.NewClient(&redis.Options{
 		Addr:     addr + ":" + port,

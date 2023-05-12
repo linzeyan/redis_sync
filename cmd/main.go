@@ -35,7 +35,9 @@ func main() {
 	}
 	flag.Parse()
 
-	redisync.Destination = redisync.NewRdb(*destHost, *destPort, *destAuth, *destDb)
-	redisync.Source = redisync.NewRdb(*sourceHost, *sourcePort, *sourceAuth, *sourceDb)
-	redisync.Sync()
+	syncer := redisync.NewSyncer(
+		redisync.NewRdb(*sourceHost, *sourcePort, *sourceAuth, *sourceDb),
+		redisync.NewRdb(*destHost, *destPort, *destAuth, *destDb),
+	)
+	syncer.Sync()
 }
